@@ -21,6 +21,8 @@
     <slf4j.version>1.7.2</slf4j.version>
     <logback.version>1.0.9</logback.version>
     <guava.version>13.0.1</guava.version>
+    <hibernate.version>4.1.7.Final</hibernate.version>
+    <derby.version>10.9.1.0</derby.version>
     
     <!-- test dependencies -->
     <junit.version>4.11</junit.version>
@@ -47,6 +49,18 @@
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-servlet</artifactId>
+      <version>${guice.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-multibindings</artifactId>
+      <version>${guice.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.google.inject.extensions</groupId>
+      <artifactId>guice-persist</artifactId>
       <version>${guice.version}</version>
     </dependency>
     
@@ -102,6 +116,22 @@
       <groupId>org.apache.amber</groupId>
       <artifactId>amber-oauth2-dynamicreg-server</artifactId>
       <version>${amber.version}</version>
+    </dependency>
+    
+    <!-- jpa -->
+    
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>${hibernate.version}</version>
+    </dependency>
+    
+    <!-- database -->
+    
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>${derby.version}</version>
     </dependency>
     
     <!-- logging -->
@@ -173,7 +203,7 @@
       <version>${jersey.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
   </dependencies>
 
   <build>

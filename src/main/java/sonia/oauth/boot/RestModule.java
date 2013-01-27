@@ -10,6 +10,7 @@ package sonia.oauth.boot;
 //~--- non-JDK imports --------------------------------------------------------
 
 import com.google.common.collect.Maps;
+import com.google.inject.persist.PersistFilter;
 import com.google.inject.servlet.ServletModule;
 
 //~--- JDK imports ------------------------------------------------------------
@@ -36,6 +37,7 @@ public class RestModule extends ServletModule
 
     config.put("com.sun.jersey.config.property.packages",
       "sonia.oauth.resources");
+    filter("/*").through(PersistFilter.class);
     filter("/*").through(GuiceContainer.class, config);
   }
 }

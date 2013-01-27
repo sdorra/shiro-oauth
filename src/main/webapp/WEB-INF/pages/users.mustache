@@ -1,0 +1,71 @@
+{{> template/header}}
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Username</th>
+      <th>Administrator</th>
+      <th>Change Password</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#users}}
+    <tr>
+      <td>{{id}}</td>
+      <td>{{username}}</td>
+      <td style="width: 50px;">{{admin}}</td>
+      <td style="width: 150px;">
+        <button class="btn" type="button">Change Password</button>
+      </td>
+      <td class="delete" style="width: 70px;">
+        <button class="btn btn-danger" type="button" data-id="{{id}}">Delete</button>
+      </td>
+    </tr>
+  {{/users}}  
+  </tbody>
+</table>
+
+<a href="#createUserForm" class="btn btn-primary" type="button" data-toggle="modal">Create new User</a>
+ 
+<!-- Modal -->
+
+<div id="createUserForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Create new User</h3>
+  </div>
+  <form method="POST">
+    <div class="modal-body">
+
+      <label>Username</label>
+      <input type="text" name="username" placeholder="username">
+
+      <label>Password</label>
+      <input type="password" name="password">
+      
+      <label>Administrator</label>
+      <input type="checkbox" name="admin">
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <button class="btn btn-primary">Save changes</button>
+    </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("td.delete button").click(function(){
+      var id = $(this).attr("data-id");
+      $.ajax('?id=' + id, {type: 'DELETE', success: function(){
+        window.location.reload();
+      }});
+    });
+  });
+</script>
+
+{{> template/footer}}

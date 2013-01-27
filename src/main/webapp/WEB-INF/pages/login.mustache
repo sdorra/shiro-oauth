@@ -1,0 +1,27 @@
+{{> template/header}}
+
+<form class="form-horizontal" method="POST" action="{{page.contextPath}}/login.html">
+
+  <div class="control-group">
+    <label class="control-label" for="username">Username</label>
+    <div class="controls">
+      <input type="text" name="username" placeholder="Username">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="password">Password</label>
+    <div class="controls">
+      <input type="password" name="password" placeholder="Password">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn">Login</button>
+    </div>
+  </div>
+
+</form>
+
+{{> template/footer}}

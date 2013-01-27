@@ -33,6 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 /**
@@ -48,6 +49,7 @@ public class TokenResource
    *
    *
    * @param request
+   * @param formParams
    *
    * @return
    *
@@ -56,7 +58,8 @@ public class TokenResource
   @POST
   @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response authorize(@Context HttpServletRequest request)
+  public Response authorize(@Context HttpServletRequest request,
+    MultivaluedMap<String, String> formParams)
     throws OAuthSystemException
   {
 
@@ -66,7 +69,9 @@ public class TokenResource
 
     try
     {
-      oauthRequest = new OAuthTokenRequest(request);
+      oauthRequest =
+        new OAuthTokenRequest(new ParameterizedHttpRequest(request,
+          formParams));
 
       // check if clientid is valid
       if (!Common.CLIENT_ID.equals(

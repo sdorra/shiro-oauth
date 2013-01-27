@@ -23,6 +23,7 @@
     <guava.version>13.0.1</guava.version>
     <hibernate.version>4.1.7.Final</hibernate.version>
     <derby.version>10.9.1.0</derby.version>
+    <mustache.version>0.8.9</mustache.version>
     
     <!-- test dependencies -->
     <junit.version>4.11</junit.version>
@@ -82,6 +83,14 @@
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-guice</artifactId>
       <version>${jersey.version}</version>
+    </dependency>
+    
+    <!-- template engine -->
+    
+    <dependency>
+      <groupId>com.github.spullara.mustache.java</groupId>
+      <artifactId>compiler</artifactId>
+      <version>${mustache.version}</version>
     </dependency>
     
     <!-- shiro -->

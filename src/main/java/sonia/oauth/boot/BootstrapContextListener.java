@@ -11,14 +11,22 @@ package sonia.oauth.boot;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.persist.PersistFilter;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.inject.servlet.ServletModule;
 
 import org.apache.shiro.guice.web.ShiroWebModule;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sonia.oauth.BaseDirectory;
 
 //~--- JDK imports ------------------------------------------------------------
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import java.util.Properties;
 
@@ -31,6 +39,35 @@ import javax.servlet.ServletContextEvent;
  */
 public class BootstrapContextListener extends GuiceServletContextListener
 {
+
+  /**
+   * the logger for BootstrapContextListener
+   */
+  private static final Logger logger =
+    LoggerFactory.getLogger(BootstrapContextListener.class);
+
+  //~--- methods --------------------------------------------------------------
+
+  /**
+   * Method description
+   *
+   *
+   * @param servletContextEvent
+   */
+  @Override
+  public void contextDestroyed(ServletContextEvent servletContextEvent)
+  {
+    super.contextDestroyed(servletContextEvent);
+
+    try
+    {
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    }
+    catch (SQLException ex)
+    {
+      logger.error("could not shutdown database", ex);
+    }
+  }
 
   /**
    * Method description
@@ -56,9 +93,17 @@ public class BootstrapContextListener extends GuiceServletContextListener
   @Override
   protected Injector getInjector()
   {
+    return Guice.createInjector(createJPAModule(), new ServletModule()
+    {
 
-    return Guice.createInjector(createJPAModule(), new RestModule(),
-      new SecurityModule(servletContext), ShiroWebModule.guiceFilterModule());
+      @Override
+      protected void configureServlets()
+      {
+        filter("/*").through(PersistFilter.class);
+      }
+
+    }, ShiroWebModule.guiceFilterModule(), new CoreModule(),
+      new SecurityModule(servletContext));
   }
 
   //~--- methods --------------------------------------------------------------

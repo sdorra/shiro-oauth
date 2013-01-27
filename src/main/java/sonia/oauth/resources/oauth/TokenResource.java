@@ -2,17 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
+
+
 package sonia.oauth.resources.oauth;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
+//~--- non-JDK imports --------------------------------------------------------
+
 import org.apache.amber.oauth2.as.issuer.MD5Generator;
 import org.apache.amber.oauth2.as.issuer.OAuthIssuer;
 import org.apache.amber.oauth2.as.issuer.OAuthIssuerImpl;
@@ -25,6 +21,20 @@ import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
 import org.apache.amber.oauth2.common.message.types.GrantType;
 
+//~--- JDK imports ------------------------------------------------------------
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 /**
  *
  * @author Sebastian Sdorra
@@ -32,86 +42,137 @@ import org.apache.amber.oauth2.common.message.types.GrantType;
 @Path("oauth/token")
 public class TokenResource
 {
-      @POST
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
-    public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
 
-        OAuthTokenRequest oauthRequest = null;
+  /**
+   * Method description
+   *
+   *
+   * @param request
+   *
+   * @return
+   *
+   * @throws OAuthSystemException
+   */
+  @POST
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response authorize(@Context HttpServletRequest request)
+    throws OAuthSystemException
+  {
 
-        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+    OAuthTokenRequest oauthRequest = null;
 
-        try {
-            oauthRequest = new OAuthTokenRequest(request);
-            
-            //check if clientid is valid
-            if (!Common.CLIENT_ID.equals(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))) {
-                OAuthResponse response =
-                    OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                        .setError(OAuthError.TokenResponse.INVALID_CLIENT).setErrorDescription("client_id not found")
-                        .buildJSONMessage();
-                return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-            }
+    OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
 
-            //do checking for different grant types
-            if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-                .equals(GrantType.AUTHORIZATION_CODE.toString())) {
-                if (!Common.AUTHORIZATION_CODE.equals(oauthRequest.getParam(OAuth.OAUTH_CODE))) {
-                    OAuthResponse response = OAuthASResponse
-                        .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                        .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                        .setErrorDescription("invalid authorization code")
-                        .buildJSONMessage();
-                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-                }
-            } else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-                .equals(GrantType.PASSWORD.toString())) {
-                if (!Common.PASSWORD.equals(oauthRequest.getPassword())
-                    || !Common.USERNAME.equals(oauthRequest.getUsername())) {
-                    OAuthResponse response = OAuthASResponse
-                        .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                        .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                        .setErrorDescription("invalid username or password")
-                        .buildJSONMessage();
-                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-                }
-            } else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-                .equals(GrantType.REFRESH_TOKEN.toString())) {
-                OAuthResponse response = OAuthASResponse
-                    .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-                    .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                    .setErrorDescription("invalid username or password")
-                    .buildJSONMessage();
-                return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-            }
+    try
+    {
+      oauthRequest = new OAuthTokenRequest(request);
 
-            OAuthResponse response = OAuthASResponse
-                .tokenResponse(HttpServletResponse.SC_OK)
-                .setAccessToken(oauthIssuerImpl.accessToken())
-                .setExpiresIn("3600")
-                .buildJSONMessage();
+      // check if clientid is valid
+      if (!Common.CLIENT_ID.equals(
+        oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID)))
+      {
+        OAuthResponse response =
+          OAuthASResponse.errorResponse(
+            HttpServletResponse.SC_BAD_REQUEST).setError(
+            OAuthError.TokenResponse.INVALID_CLIENT).setErrorDescription(
+            "client_id not found").buildJSONMessage();
 
-            return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-        } catch (OAuthProblemException e) {
-            OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
-                .buildJSONMessage();
-            return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
+        return Response.status(response.getResponseStatus()).entity(
+          response.getBody()).build();
+      }
+
+      // do checking for different grant types
+      if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
+        GrantType.AUTHORIZATION_CODE.toString()))
+      {
+        if (!Common.AUTHORIZATION_CODE.equals(
+          oauthRequest.getParam(OAuth.OAUTH_CODE)))
+        {
+          OAuthResponse response =
+            OAuthASResponse.errorResponse(
+              HttpServletResponse.SC_BAD_REQUEST).setError(
+              OAuthError.TokenResponse.INVALID_GRANT).setErrorDescription(
+              "invalid authorization code").buildJSONMessage();
+
+          return Response.status(response.getResponseStatus()).entity(
+            response.getBody()).build();
         }
+      }
+      else if (
+        oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
+          GrantType.PASSWORD.toString()))
+      {
+        if (!Common.PASSWORD.equals(oauthRequest.getPassword())
+          ||!Common.USERNAME.equals(oauthRequest.getUsername()))
+        {
+          OAuthResponse response =
+            OAuthASResponse.errorResponse(
+              HttpServletResponse.SC_BAD_REQUEST).setError(
+              OAuthError.TokenResponse.INVALID_GRANT).setErrorDescription(
+              "invalid username or password").buildJSONMessage();
+
+          return Response.status(response.getResponseStatus()).entity(
+            response.getBody()).build();
+        }
+      }
+      else if (
+        oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
+          GrantType.REFRESH_TOKEN.toString()))
+      {
+        OAuthResponse response =
+          OAuthASResponse.errorResponse(
+            HttpServletResponse.SC_BAD_REQUEST).setError(
+            OAuthError.TokenResponse.INVALID_GRANT).setErrorDescription(
+            "invalid username or password").buildJSONMessage();
+
+        return Response.status(response.getResponseStatus()).entity(
+          response.getBody()).build();
+      }
+
+      OAuthResponse response = OAuthASResponse.tokenResponse(
+                                 HttpServletResponse.SC_OK).setAccessToken(
+                                 oauthIssuerImpl.accessToken()).setExpiresIn(
+                                 "3600").buildJSONMessage();
+
+      return Response.status(response.getResponseStatus()).entity(
+        response.getBody()).build();
     }
+    catch (OAuthProblemException e)
+    {
+      OAuthResponse res = OAuthASResponse.errorResponse(
+                            HttpServletResponse.SC_BAD_REQUEST).error(
+                            e).buildJSONMessage();
 
-    @GET
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
-    public Response authorizeGet(@Context HttpServletRequest request) throws OAuthSystemException {
-        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-
-        OAuthResponse response = OAuthASResponse
-            .tokenResponse(HttpServletResponse.SC_OK)
-            .setAccessToken(oauthIssuerImpl.accessToken())
-            .setExpiresIn("3600")
-            .buildJSONMessage();
-
-        return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+      return Response.status(res.getResponseStatus()).entity(
+        res.getBody()).build();
     }
+  }
 
+  /**
+   * Method description
+   *
+   *
+   * @param request
+   *
+   * @return
+   *
+   * @throws OAuthSystemException
+   */
+  @GET
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response authorizeGet(@Context HttpServletRequest request)
+    throws OAuthSystemException
+  {
+    OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+
+    OAuthResponse response = OAuthASResponse.tokenResponse(
+                               HttpServletResponse.SC_OK).setAccessToken(
+                               oauthIssuerImpl.accessToken()).setExpiresIn(
+                               "3600").buildJSONMessage();
+
+    return Response.status(response.getResponseStatus()).entity(
+      response.getBody()).build();
+  }
 }

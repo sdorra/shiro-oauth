@@ -13,6 +13,7 @@
     <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     
+    <!-- dependencies -->
     <guice.version>3.0</guice.version>
     <jersey.version>1.17</jersey.version>
     <shiro.version>1.2.1</shiro.version>
@@ -20,6 +21,10 @@
     <slf4j.version>1.7.2</slf4j.version>
     <logback.version>1.0.9</logback.version>
     <guava.version>13.0.1</guava.version>
+    
+    <!-- test dependencies -->
+    <junit.version>4.11</junit.version>
+    <mockito.version>1.9.0</mockito.version>
   </properties>
 
   <dependencies>
@@ -131,6 +136,29 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>${guava.version}</version>
+    </dependency>
+    
+    <!-- test -->
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.sun.jersey.jersey-test-framework</groupId>
+      <artifactId>jersey-test-framework-grizzly2</artifactId>
+      <version>${jersey.version}</version>
+      <scope>test</scope>
     </dependency>
     
   </dependencies>

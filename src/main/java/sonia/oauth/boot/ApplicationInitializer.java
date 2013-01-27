@@ -12,7 +12,6 @@ package sonia.oauth.boot;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-
 import sonia.oauth.dao.UserDAO;
 import sonia.oauth.entity.User;
 
@@ -112,11 +111,7 @@ public class ApplicationInitializer implements Filter
 
     if (user == null)
     {
-      user = new User();
-      user.setUsername("admin");
-      user.setAdmin(true);
-      userDAO.applyPassword(user, "admin");
-      userDAO.create(user);
+      userDAO.create(new User("admin", "admin", true));
     }
   }
 

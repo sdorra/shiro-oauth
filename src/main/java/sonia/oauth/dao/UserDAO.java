@@ -11,11 +11,6 @@ package sonia.oauth.dao;
 
 import com.google.inject.Inject;
 
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.util.ByteSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +39,6 @@ public class UserDAO
    */
   private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
-  /** Field description */
-  private static final RandomNumberGenerator rng =
-    new SecureRandomNumberGenerator();
-
   //~--- constructors ---------------------------------------------------------
 
   /**
@@ -63,22 +54,6 @@ public class UserDAO
   }
 
   //~--- methods --------------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   *
-   * @param user
-   * @param password
-   */
-  public void applyPassword(User user, String password)
-  {
-    ByteSource salt = rng.nextBytes();
-    Sha256Hash hash = new Sha256Hash(password, salt, 2048);
-
-    user.setHash(hash.getBytes());
-    user.setSalt(salt.getBytes());
-  }
 
   /**
    * Method description

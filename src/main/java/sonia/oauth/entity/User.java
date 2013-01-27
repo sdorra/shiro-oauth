@@ -7,6 +7,15 @@
 
 package sonia.oauth.entity;
 
+//~--- non-JDK imports --------------------------------------------------------
+
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.util.ByteSource;
+
+import org.hibernate.annotations.Index;
+
 //~--- JDK imports ------------------------------------------------------------
 
 import java.io.Serializable;
@@ -28,6 +37,50 @@ public class User implements Serializable
 
   /** Field description */
   private static final long serialVersionUID = -6532230509150752413L;
+
+  /** Field description */
+  private static final RandomNumberGenerator rng =
+    new SecureRandomNumberGenerator();
+
+  //~--- constructors ---------------------------------------------------------
+
+  /**
+   * Constructs ...
+   *
+   */
+  public User() {}
+
+  /**
+   * Constructs ...
+   *
+   *
+   * @param username
+   * @param password
+   * @param admin
+   */
+  public User(String username, String password, boolean admin)
+  {
+    this.username = username;
+    this.setPassword(password);
+    this.admin = admin;
+  }
+
+  //~--- set methods ----------------------------------------------------------
+
+  /**
+   * Method description
+   *
+   *
+   * @param password
+   */
+  public final void setPassword(String password)
+  {
+    ByteSource saltSource = rng.nextBytes();
+    Sha256Hash shaHash = new Sha256Hash(password, saltSource, 2048);
+
+    this.hash = shaHash.getBytes();
+    this.salt = saltSource.getBytes();
+  }
 
   //~--- get methods ----------------------------------------------------------
 
@@ -103,28 +156,6 @@ public class User implements Serializable
    * Method description
    *
    *
-   * @param hash
-   */
-  public void setHash(byte[] hash)
-  {
-    this.hash = hash;
-  }
-
-  /**
-   * Method description
-   *
-   *
-   * @param salt
-   */
-  public void setSalt(byte[] salt)
-  {
-    this.salt = salt;
-  }
-
-  /**
-   * Method description
-   *
-   *
    * @param username
    */
   public void setUsername(String username)
@@ -139,7 +170,7 @@ public class User implements Serializable
   private boolean admin;
 
   /** Field description */
-  @Column(name = "PASSWORD_HASH")
+  @Column(name = "PASSWORD_HASH", length = 32)
   private byte[] hash;
 
   /** Field description */
@@ -148,9 +179,10 @@ public class User implements Serializable
   private Long id;
 
   /** Field description */
-  @Column(name = "PASSWORD_SALT")
+  @Column(name = "PASSWORD_SALT", length = 16)
   private byte[] salt;
 
   /** Field description */
+  @Index(name = "index_username")
   private String username;
 }

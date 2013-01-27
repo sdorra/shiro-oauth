@@ -36,7 +36,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  *
@@ -86,19 +85,16 @@ public class UsersResource extends ViewableResource
    *
    * @return
    */
+  //J-
   @POST
   @Produces(MediaType.TEXT_HTML)
-  public Viewable createUser(@FormParam("username") String username,
+  public Viewable createUser(
+    @FormParam("username") String username,
     @FormParam("password") String password, 
-    @DefaultValue("false")
-    @FormParam("admin") boolean admin)
+    @DefaultValue("false") @FormParam("admin") boolean admin)
+  //J+
   {
-    User user = new User();
-
-    user.setUsername(username);
-    user.setAdmin(admin);
-    userDAO.applyPassword(user, password);
-    userDAO.create(user);
+    userDAO.create(new User(username, password, admin));
 
     return getPage();
   }
